@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Driver drowsiness detection | Final Commit sample project</title>
+  <meta name="description" content="Watches your eyes, yawns and head through the camera and sounds an alarm if you nod off. Runs in the browser with MediaPipe. A sample project by Final Commit." />
+  <link rel="icon" href="https://finalcommitprojects.github.io/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="f6b0f6cf-bb7f-4bd1-917e-acc1d8116251" data-domains="finalcommitprojects.github.io"></script>
+</head>
+<body>
+  <header class="top">
+    <p class="tag">Sample project · Computer vision</p>
+    <h1>Driver drowsiness detection</h1>
+    <p class="sub">Watches your eyes, yawns and head through the camera, and sounds an alarm if you nod off.</p>
+    <p class="mode">Runs in your browser: the video never leaves this device. This is a sample project, not a safety device.</p>
+  </header>
+
+  <main>
+    <section class="card monitor" aria-label="Drowsiness monitor">
+      <div id="status" class="status idle" role="status" aria-live="polite"><strong>Ready</strong><span>Press start, then look at the camera with your eyes open for 3 seconds.</span></div>
+      <div class="controls">
+        <button id="start" type="button" class="primary" data-umami-event="demo-drowsy-start">Start</button>
+        <button id="stop" type="button" class="ghost" hidden>Stop</button>
+      </div>
+      <div class="view"><video id="video" playsinline muted></video><canvas id="overlay"></canvas></div>
+      <div class="tiles">
+        <div><small>Eyes</small><b id="t-eyes">–</b></div>
+        <div><small>Eyes closed</small><b id="t-perclos">–</b><small id="t-perclos-sub">last minute</small></div>
+        <div><small>Yawns, 5 min</small><b id="t-yawns">–</b></div>
+        <div><small>Head</small><b id="t-head">–</b></div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="chart" aria-hidden="true"></canvas>
+        <p class="legend"><i class="l-eyes"></i>Eye closure <i class="l-mouth"></i>Mouth opening <i class="l-line"></i>Closed above this · last 20 seconds</p>
+      </div>
+      <div class="settings">
+        <label>Alarm after eyes are closed for
+          <select id="closed-after"><option value="1">1 second</option><option value="1.5" selected>1.5 seconds</option><option value="2">2 seconds</option></select>
+        </label>
+        <label class="check"><input id="sound" type="checkbox" checked /> Sound</label>
+        <button id="test-alarm" type="button" class="link">Test the alarm</button>
+      </div>
+    </section>
+
+    <section class="card how" aria-labelledby="how">
+      <h2 id="how">How it works</h2>
+      <p>MediaPipe Face Landmarker finds 478 points on your face in every camera frame. From them, three readings:</p>
+      <ol>
+        <li><strong>Eye closure</strong>, from 0 (open) to 1 (closed). On real video it sits around 0.1 with eyes open and jumps to about 0.75 on a blink. Eyes closed for 1.5 seconds sound the alarm, and so does eyes closed for more than 15% of the last minute (PERCLOS, a standard drowsiness measure). That one shows "take a break".</li>
+        <li><strong>Mouth opening</strong>: the gap between the lips over the mouth's width. Talking stays under 0.45; a yawn reaches about 0.8. A mouth held over 0.6 for 1.5 seconds is a yawn, and two yawns in five minutes say "take a break".</li>
+        <li><strong>Head angle</strong>: if your head drops 20 degrees from where it started and stays there for a second, the alarm sounds.</li>
+      </ol>
+      <p>The first 3 seconds calibrate to your face, so eyes that look half-closed even when open don't set off the alarm.</p>
+      <h3>What the full project usually adds</h3>
+      <p>A Raspberry Pi with a camera and a buzzer on the dashboard, an infrared camera for night driving, an SMS to a family member when the alarm keeps sounding, a log of each trip, and the report.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Sample project. Face model by <a href="https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker">MediaPipe</a> (Apache 2.0). Built by <a href="https://finalcommitprojects.github.io/?utm_source=demo&amp;utm_campaign=demo-drowsiness" data-umami-event="demo-to-site">Final Commit</a></p>
+  </footer>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
